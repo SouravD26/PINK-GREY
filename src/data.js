@@ -41,3 +41,16 @@ export const TESTIMONIALS = [
   { name: 'Regular Customer', text: 'Best salon near Narendrapur. The hair spa was so relaxing, highly recommend.' },
   { name: 'Bridal Client', text: 'They did my pre-bridal and makeup and I looked flawless all day. Thank you Pink & Grey!' },
 ]
+
+// Placeholder stock photos: swap `src` for real salon photos (e.g. files in /public/gallery -> '/gallery/xyz.jpg').
+const u = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=75`
+export const GALLERY = [
+  { src: u('photo-1560066984-138dadb4c035'), cat: 'Studio', title: 'Our Studio', tall: true },
+  { src: u('photo-1522337360788-8b13dee7a37e'), cat: 'Hair', title: 'Styling Session' },
+  { src: u('photo-1487412947147-5cebf100ffc2'), cat: 'Bridal', title: 'Bridal Makeup', tall: true },
+  { src: u('photo-1503951914875-452162b0f3f1'), cat: 'Men', title: 'Beard & Grooming' },
+  { src: u('photo-1604654894610-df63bc536371'), cat: 'Nails', title: 'Nail Art' },
+  { src: u('photo-1570172619644-dfd03ed5d881'), cat: 'Skin', title: 'Glow Facial', tall: true },
+  { src: u('photo-1562322140-8baeececf3df'), cat: 'Hair', title: 'Colour & Cut' },
+  { src: u('photo-1595476108010-b4d1f102b1b1'), cat: 'Hair', title: 'Colour Work' },
+]

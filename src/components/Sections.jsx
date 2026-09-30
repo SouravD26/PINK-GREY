@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, animate, motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Reveal from './Reveal'
-import { SALON, SERVICES, STATS, TESTIMONIALS, WHY } from '../data'
+import { GALLERY, SALON, SERVICES, STATS, TESTIMONIALS, WHY } from '../data'
 
 const heading = {
   hidden: {},
@@ -314,6 +314,69 @@ export function PageHeader({ eyebrow, title, accent }) {
           <Link to="/">Home</Link> / <span>{eyebrow}</span>
         </motion.div>
       </div>
+    </section>
+  )
+}
+
+export function Gallery() {
+  const cats = ['All', ...new Set(GALLERY.map((g) => g.cat))]
+  const [filter, setFilter] = useState('All')
+  const [open, setOpen] = useState(null)
+  const items = filter === 'All' ? GALLERY : GALLERY.filter((g) => g.cat === filter)
+
+  useEffect(() => {
+    if (open === null) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(null)
+      if (e.key === 'ArrowRight') setOpen((o) => (o + 1) % items.length)
+      if (e.key === 'ArrowLeft') setOpen((o) => (o - 1 + items.length) % items.length)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, items.length])
+
+  const step = (d) => (e) => { e.stopPropagation(); setOpen((open + d + items.length) % items.length) }
+
+  return (
+    <section id="gallery">
+      <div className="container">
+        <Reveal className="center">
+          <span className="eyebrow">Our Work</span>
+          <h2 className="section-title">Style <span className="grad-text">Gallery</span></h2>
+          <p className="section-sub" style={{ margin: '0 auto' }}>A glimpse of the looks, transformations and moments created at Pink &amp; Grey.</p>
+        </Reveal>
+        <div className="gallery-filters">
+          {cats.map((c) => (
+            <button key={c} className={c === filter ? 'on' : ''} onClick={() => setFilter(c)}>{c}</button>
+          ))}
+        </div>
+        <motion.div layout className="gallery-grid">
+          <AnimatePresence>
+            {items.map((g, i) => (
+              <motion.button layout key={g.src} className={`gallery-item glass${g.tall ? ' tall' : ''}`}
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4 }} onClick={() => setOpen(i)}>
+                <img src={g.src} alt={g.title} loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} />
+                <span className="gallery-cap"><small>{g.cat}</small>{g.title}</span>
+              </motion.button>
+            ))}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+
+      <AnimatePresence>
+        {open !== null && items[open] && (
+          <motion.div className="lightbox" onClick={() => setOpen(null)}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.img key={items[open].src} src={items[open].src.replace('w=800', 'w=1600')} alt={items[open].title}
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={(e) => e.stopPropagation()} />
+            <button className="lb-close" aria-label="Close" onClick={() => setOpen(null)}>✕</button>
+            <button className="lb-nav prev" aria-label="Previous" onClick={step(-1)}>‹</button>
+            <button className="lb-nav next" aria-label="Next" onClick={step(1)}>›</button>
+            <p className="lb-cap">{items[open].title}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
